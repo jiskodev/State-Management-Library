@@ -89,6 +89,11 @@ const unsubscribe = store.subscribe(() => {
     console.log('The new state is ', store.getState())
 })
 
+
+
+// ACTIONS
+
+/*
 store.dispatch({
     type: 'ADD_TODO',
     todo: {
@@ -146,3 +151,5 @@ store.dispatch({
     type: 'REMOVE_GOAL',
     id: 0
 })
+
+*/
