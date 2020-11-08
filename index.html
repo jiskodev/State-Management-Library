@@ -23,6 +23,12 @@
         <ul id="goals"></ul>
     </div>
 
+    <hr />
+
+    <!-- REACT -->
+
+    <div id="app"></div>
+
 
     <script type='text/javascript'>
 
@@ -223,6 +229,58 @@
 
         document.getElementById('goalBtn')
             .addEventListener('click', addGoal)
+    
+    </script>
+
+    <script type="text/babel">
+
+
+        function List (props) {
+            return (
+                <ul>
+                    <li>LIST</li>
+                </ul>
+            )
+        }
+
+        class Todos extends React.Component {
+            render() {
+                return (
+                    <div>
+                        TODOS
+                        <List />    
+                    </div>
+                )
+            }
+        }
+        
+        class Goals extends React.Component {
+            render() {
+                return (
+                    <div>
+                        GOALS
+                        <List />    
+                    </div>
+                )
+            }
+        }
+
+        class App extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <Todos />
+                        <Goals />
+                    </div>
+                )
+            }
+        }
+
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('app')
+        )
     
     </script>
 </body>
