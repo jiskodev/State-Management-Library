@@ -1,1 +1,1 @@
-State Management Library
+State Management Library (Recreating Redux)

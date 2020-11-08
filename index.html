@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todos/Goals</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.5/redux.min.js'></script>
 </head>
 <body>
     <div>
@@ -21,55 +22,16 @@
 
 
     <script type='text/javascript'>
+
+        //Generating id for the todos and goals
         function generateId () {
             return Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36)
         }
 
-        function createStore (reducer) {
-
-            let state
-            let listeners = []
-
-            const getState = () => state
-
-
-            const subscribe = (listener) => {
-                listeners.push(listener)
-                return () =>  {
-                    listeners = listeners.filter((l) => l !== listener)
-                }
-            }
-
-
-
-            const dispatch = (action) => {
-                state = reducer(state, action)
-                listeners.forEach((listener) => listener())
-            }
-
-
-            return {
-                getState,
-                subscribe,
-                dispatch
-            }
-        }
-
-        const store = createStore(app)
-
-        store.subscribe(() => {
-            const { goals, todos } = store.getState()
-            
-            // resetting the lists before adding the goals and todos
-            document.getElementById('goals').innerHTML = ''
-            document.getElementById('todos').innerHTML = ''
-
-            goals.forEach(addGoalToDOM)
-            todos.forEach(addTodoToDOM)
-        })
-
         
 
+        
+        // APP CODE
 
         const ADD_TODO = 'ADD_TODO'
         const REMOVE_TODO = 'REMOVE_TODO'
@@ -112,6 +74,8 @@
             }
         }
 
+        // Reducer function
+
         function todos (state = [], action) {
             switch(action.type) {
                 case ADD_TODO :
@@ -138,13 +102,21 @@
             }
         }
 
-        function app (state = {}, action) {
-            return {
-                todos: todos(state.todos, action),
-                goals: goals(state.goals, action)
-            }
-        }
+        const store = Redux.createStore(Redux.combineReducers({
+            todos,
+            goals,
+        }))
 
+        store.subscribe(() => {
+            const { goals, todos } = store.getState()
+            
+            // resetting the lists before adding the goals and todos
+            document.getElementById('goals').innerHTML = ''
+            document.getElementById('todos').innerHTML = ''
+
+            goals.forEach(addGoalToDOM)
+            todos.forEach(addTodoToDOM)
+        })
 
         
         // DOM CODE
