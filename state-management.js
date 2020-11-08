@@ -63,7 +63,7 @@ const ADD_GOAL = 'ADD_GOAL'
 const REMOVE_GOAL = 'REMOVE_GOAL'
 
 
-//
+// ACTION CREATORS 
 function addTodoAction (todo) {
     return {
         type: ADD_TODO,
@@ -141,7 +141,7 @@ function app (state = {}, action) {
 
 // ACTIONS
 
-/*
+
 store.dispatch(addTodoAction({
     id: 0,
     name: 'Walk the dog',
@@ -178,5 +178,3 @@ store.dispatch(addGoalAction({
 
 store.dispatch(removeGoalAction(0))
 
-
-*/
