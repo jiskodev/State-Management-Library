@@ -9,6 +9,7 @@
     <script src='https://unpkg.com/react-dom@16.13.1/umd/react-dom.development.js'></script>
     <script src='https://unpkg.com/babel-standalone@6.26.0/babel.min.js'></script>
     <script src='https://ui.dev/goals-todos-api/index.js'></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app"></div>
@@ -74,6 +75,17 @@
             }
         }
 
+        function handleDeleteTodo (todo) {
+            return (dispatch) => {
+                dispatch(removeTodoAction(todo.id))
+                return API.deleteTodo(todo.id)
+                    .catch(() => {
+                        dispatch(addTodoAction(todo))
+                        alert('An errror ocurred, try again')
+                    })
+            }            
+        }
+
         const checker = (store) => (next) => (action) => {
             if (
                 action.type === ADD_TODO && action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
@@ -97,6 +109,14 @@
             console.log('The new state: ', store.getState())
             console.groupEnd()
             return result
+        }
+
+        const thunk = (store) => (next) => (action) => {
+            if (typeof action === 'function') {
+                return action(store.dispatch)
+            }
+
+            return next(action)
         }
 
         // Reducer function
@@ -145,7 +165,7 @@
             todos,
             goals,
             loading
-        }), Redux.applyMiddleware(checker, logger))
+        }), Redux.applyMiddleware(thunk, checker, logger))
 
     
     </script>
@@ -175,27 +195,27 @@
 
             addItem = (e) => {
                 e.preventDefault()
-                const name = this.input.value
-                this.input.value = ''
+                
 
-                this.props.store.dispatch(addTodoAction({
-                    id: generateId(),
-                    name,
-                    complete: false
-                }))
+                return API.saveTodo(this.input.value)
+                    .then((todo) => {
+                        this.props.store.dispatch(addTodoAction(todo))
+                        this.input.value = ''
+                    })
+                    .catch(() => alert('There was an error, try again.'))
             }
 
             removeItem = (todo) => {
-                this.props.store.dispatch(removeTodoAction(todo.id))
-                return API.deleteTodo(todo.id)
-                    .catch(() => {
-                        this.props.store.dispatch(addTodoAction(todo))
-                        alert('An errror ocurred, try again')
-                    })
-                
+                this.props.store.dispatch(handleDeleteTodo(todo))
+
             }
             toggleItem = (id) => {
                 this.props.store.dispatch(toggleTodoAction(id))
+                return API.saveTodoToggle(id)
+                    .catch(() => {
+                        this.props.store.dispatch(toggleTodoAction(id))
+                        alert('An error ocurred, try again.')
+                    })
             }
 
             render() {
@@ -207,7 +227,7 @@
                         placeholder='Add Todo'
                         ref={(input) => this.input = input}
                         />
-                        <button onClick={this.addItem}>Add Todo</button>
+                        <button className='submitBtn' onClick={this.addItem}>Add Todo</button>
                         <List 
                         items={this.props.todos}
                         remove={this.removeItem}
@@ -221,13 +241,13 @@
         class Goals extends React.Component {
             addItem = (e) => {
                 e.preventDefault()
-                const name = this.input.value
-                this.input.value = ''
 
-                this.props.store.dispatch(addGoalAction({
-                    id: generateId(),
-                    name
-                }))
+                return API.saveGoal(this.input.value)
+                    .then((goal) => {
+                        this.props.store.dispatch(addGoalAction(goal))
+                        this.input.value= ''
+                    })
+                    .catch(() => alert('There was an error, try again.'))
             }
             
             removeItem = (goal) => {
@@ -243,12 +263,15 @@
                 return (
                     <div>
                         <h1>Goals List</h1>
+                            
                         <input 
                         type="text"
                         placeholder='Add Goal'
                         ref={(input) => this.input = input}
                         />
-                        <button onClick={this.addItem}>Add Todo</button>
+                        <button className='submitBtn' onClick={this.addItem}>Add Todo</button>
+                            
+                        
                         <List items={this.props.goals}
                         remove={this.removeItem} />    
                     </div>
