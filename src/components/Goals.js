@@ -1,43 +1,39 @@
 import * as React from 'react'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import List from './List'
 import { handleAddGoal, handleDeleteGoal } from '../actions/goals'
 
-class Goals extends React.Component {
-    addItem = (e) => {
+export default function Goals () {
+    const input = React.useRef('')
+    const dispatch = useDispatch()
+    const goals = useSelector((state) => state.goals)
+
+    const addItem = (e) => {
         e.preventDefault()
-        this.props.dispatch(handleAddGoal(
-            this.input.value,
-            () => this.input.value = ''
+        dispatch(handleAddGoal(
+            input.current.value,
+            () => input.current.value = ''
         ))
+    }
 
-
+    const removeItem = (goal) => {
+        dispatch(handleDeleteGoal(goal))
     }
     
-    removeItem = (goal) => {
-        this.props.dispatch(handleDeleteGoal(goal))
-    }
-
-    render() {
-        return (
-            <div>
-                <h1>Goals List</h1>
-                    
-                <input 
-                type="text"
-                placeholder='Add Goal'
-                ref={(input) => this.input = input}
-                />
-                <button className='submitBtn' onClick={this.addItem}>Add Todo</button>
-                    
+    return (
+        <div>
+            <h1>Goals List</h1>
                 
-                <List items={this.props.goals}
-                remove={this.removeItem} />    
-            </div>
-        )
-    }
+            <input 
+            type="text"
+            placeholder='Add Goal'
+            ref={input}
+            />
+            <button className='submitBtn' onClick={addItem}>Add Todo</button>
+                
+            
+            <List items={goals}
+            remove={removeItem} />    
+        </div>
+    )
 }
-
-export default connect((state) => ({
-    goals: state.goals
-}))(Goals)
