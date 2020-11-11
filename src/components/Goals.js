@@ -29,11 +29,10 @@ export default function Goals () {
             placeholder='Add Goal'
             ref={input}
             />
+
             <button className='submitBtn' onClick={addItem}>Add Todo</button>
-                
-            
-            <List items={goals}
-            remove={removeItem} />    
+
+            <List items={goals} remove={removeItem} />    
         </div>
     )
 }
